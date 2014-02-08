@@ -3,9 +3,6 @@ require 'erb'
 require 'mysql'
 require 'json'
 
-# Run web app on all IPs
-set :bind, '0.0.0.0'
-
 def full_result_hashback(select_command)
 	puts select_command
 	# Return an array of hashes from a MySQL query result, one row per array unit, each row as a hash.
@@ -25,7 +22,17 @@ def full_result_hashback(select_command)
 	return result_list_of_hashes
 end
 
-get '/list/:output_format/:verbosity/:active/' do
+# Start webserver.  Run web app on all IPs.
+set :bind, '0.0.0.0'
+
+# Make an array of a list of countries for the search tool
+country_code_list = Array.new
+country_code_hash = full_result_hashback("SELECT country_code FROM countries")
+country_code_hash.each do |row|
+	country_code_list.push(row["country_code"])
+end
+
+get '/list/:output_format/:verbosity/:country/:active/' do
 	select_command='SELECT '
 	# List of rows to select depends on verbosity indicated
 
@@ -33,12 +40,21 @@ get '/list/:output_format/:verbosity/:active/' do
 	#        html view expects the column names to match the sql column names.  just sayin'.
 	case params[:verbosity]
 	when "terse"
-		select_command = select_command + "id, short_name FROM ixps WHERE 1=1 "
+		select_command = select_command + "i.id, i.short_name FROM ixps i, countries c WHERE c.id=i.country_id "
 		@column_names = ['id', 'short_name']
 	when "brief"
 		select_command = select_command + "i.id, i.full_name, i.city, i.state, c.country_code, c.name as country_name FROM ixps i, countries c WHERE c.id=i.country_id "
 		@column_names = ['id','full_name','city','state','country_code','country_name']
 	else
+		halt 404
+	end
+
+	if country_code_list.include? params[:country]
+		select_command = select_command + "AND c.country_code='" + params[:country] +"' "
+	elsif params[:country] == "all"
+		# Do nothing.
+	else
+		puts "Invalid country code: " + params[:country]
 		halt 404
 	end
 
