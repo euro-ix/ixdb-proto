@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'erb'
 require 'mysql'
+require 'json'
 
 # Run web app on all IPs
 set :bind, '0.0.0.0'
@@ -55,6 +56,9 @@ get '/list/:output_format/:verbosity/:active/' do
 	case params[:output_format]
 	when "ruby"
 		@display = @list_of_ixps
+		erb :blank, layout: false
+	when "json"
+		@display = @list_of_ixps.to_json
 		erb :blank, layout: false
 	when "html"
 		erb :list_ixp
