@@ -49,6 +49,7 @@ get '/list/:output_format/:verbosity/:country/:active/' do
 		halt 404
 	end
 
+	# If the country code is a valid country, then add it to the query.
 	if country_code_list.include? params[:country]
 		select_command = select_command + "AND c.country_code='" + params[:country] +"' "
 	elsif params[:country] == "all"
