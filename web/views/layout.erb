@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>IXP Browser</title>
+</head>
+
+<body style="padding-top: 50px;">
+  <div class="container">
+    <%if @error then %>
+    <div class="alert alert-error"><%=@error%></div>
+    <% end %>
+    <!-- Start of yielded content. -->
+    <%= yield %>
+    <!-- end of yielded content -->
+ 
+  <footer>
+    <hr />
+    <p>&copy; The European Internet Exchange Association, and the IXP Federation, 2014.  <br />
+       <i>Peerkemon, gotta cross-connect 'em all.</i></p>
+  </footer>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<% @column_names.each do |cols| %><td><%= cols %></td><% end %>
+		</tr>
+	</thead>
+	<tbody>
+		<% @list_of_ixps.each do |ixp| %><tr>
+			<% @column_names.each do |cols| %><td><%= ixp[cols] %></td><% end %>
+		</tr><% end %>
+	</tbody>
+</table>
